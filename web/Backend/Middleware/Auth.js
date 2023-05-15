@@ -3,8 +3,16 @@ import Teacher from '../Models/Teacher.js'
 
  const authMiddleware = (role) => async(req,res,next)=>{
 
-    const token=req.headers.authorization.split(' ')[1];
+  const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Authorization token not found' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    //const token=req.headers.authorization.split(' ')[1];
     //console.log(token)
+    //const token = localStorage.getItem('token');
     if(token==null){
       res.send("Token not provided")
       return
@@ -18,7 +26,7 @@ import Teacher from '../Models/Teacher.js'
           } else {
 
             req.token = token;
-            req.user = user;
+            //req.user = user;
             req.TeacherId = user.TeacherId;
             console.log(req.TeacherId);
             console.log(user.name)
@@ -26,16 +34,6 @@ import Teacher from '../Models/Teacher.js'
             if (!role.includes(firstLetter)) {
               return res.status(403).json({ message: "Authorization Failed" });
             }
-            // req.token = token;
-            //  req.user = user;
-            //  res.json({
-            //   success:true,
-            //   data:{
-            //     user:user.name,
-            //     email:user.email,
-            //     token:token
-            //   }
-            //  })
           }
      }catch{
            return res.send("Invalid token")

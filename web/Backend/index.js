@@ -17,9 +17,12 @@ mongoose.connect("mongodb+srv://Muqadisa:muqadisa1@cluster0.t4cixon.mongodb.net/
 
 //Routes  
 import TeacherRoute from './Routes/Teacher.js'
-  app.use('/api/user',TeacherRoute)
+  app.use('/api/teacher',TeacherRoute)
 
 
 app.listen(4200, () => {
   console.log("Server started on port 4200");
 });
+
+
+
