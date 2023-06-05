@@ -1,11 +1,11 @@
 import bcrypt from 'bcryptjs';
 import  Teacher  from '../Models/Teacher.js'
 import Student from '../Models/Student.js';
-import RegisteredCourse from '../models/RegisteredCourse.js';
 import jwt from'jsonwebtoken';
 import Attendance from '../Models/Attendance.js'
 import Marks from '../Models/Marks.js';
 import Assignment from '../Models/CourseAssigned.js';
+import RegisteredCourses from '../Models/RegisteredCourses.js'
 
 //*******************Login*************************
 
@@ -48,13 +48,13 @@ const loginTeacher = async (req, res) => {
 const markAttendance = async (req, res) => {
 
     try {
-      const { courseId } = req.params;
+      const { courseCode } = req.params;
       const { date, attendanceList } = req.body;   //list holding student ids and their attendance
   
       const attendanceDate = new Date(date);
       attendanceDate.setUTCHours(0, 0, 0, 0);
   
-      const existingAttendance = await Attendance.findOne({courseId, 'attendanceRecords.date': { $eq: attendanceDate },});
+      const existingAttendance = await Attendance.findOne({courseCode, 'attendanceRecords.date': { $eq: attendanceDate },});
   
       if (existingAttendance) {
         return res.status(400).json({ error: 'Attendance already marked for this date' });
@@ -65,7 +65,7 @@ const markAttendance = async (req, res) => {
         attendanceList,
       };
   
-      let attendance = await Attendance.findOne({ courseId });
+      let attendance = await Attendance.findOne({ courseCode });
   
       if (attendance) {
        
@@ -73,7 +73,7 @@ const markAttendance = async (req, res) => {
       } else {
         
         attendance = new Attendance({       //new record 
-          courseId,
+          courseCode,
           attendanceRecords: [attendanceRecord],
         });
       }
@@ -99,16 +99,17 @@ const markAttendance = async (req, res) => {
 const addMarks = async (req, res) => {
   
   try {
-    const { courseId } = req.params;
+    const { courseCode } = req.params;
+    console.log(courseCode)
     const { examType, totalMarks, students } = req.body;
-
+    console.log(examType)
     const studentMarks = students.map((student) => {
-      const { studentId, obtainedMarks } = student;
-      return { studentId, obtainedMarks };
+      const { StudentId, obtainedMarks } = student;
+      return { StudentId, obtainedMarks };
     });
 
 
-    let coursemarks = await Marks.findOne({ courseId });
+    let coursemarks = await Marks.findOne({ courseCode });
 
     if (coursemarks) {
      
@@ -122,7 +123,7 @@ const addMarks = async (req, res) => {
       // creating new record
     } else {
       coursemarks = new Marks({
-        courseId,
+        courseCode,
         marks: [{ examType, totalMarks, studentMarks }],
       });
     }
@@ -142,10 +143,10 @@ const addMarks = async (req, res) => {
 const updateMarks = async (req, res) => {
 
     try {
-      const { courseId, examType } = req.params;
+      const { courseCode, examType } = req.params;
       const { studentMarks } = req.body;
       
-      const coursemarks = await Marks.findOne({ courseId });
+      const coursemarks = await Marks.findOne({ courseCode });
   
       if (!coursemarks) {
         return res.status(404).json({ error: 'Marks not found for the given course' });
@@ -160,7 +161,7 @@ const updateMarks = async (req, res) => {
       examMarks.studentMarks.forEach((student) => {
         console.log(student)
 
-        const updatedStudent = studentMarks.find((updatedStudent) => updatedStudent.studentId === student.studentId);
+        const updatedStudent = studentMarks.find((updatedStudent) => updatedStudent.StudentId === student.StudentId);
         if (updatedStudent) {
           student.obtainedMarks = updatedStudent.obtainedMarks;
         }
@@ -182,9 +183,10 @@ const updateMarks = async (req, res) => {
 
 const deleteMarks = async (req, res) => {
     try {
-      const { courseId, examType, studentId } = req.params;
-  
-      const coursemarks = await Marks.findOne({ courseId });
+      const { courseCode, examType, StudentId } = req.params;
+      console.log(StudentId)
+      console.log(courseCode)
+      const coursemarks = await Marks.findOne({ courseCode });
   
       if (!coursemarks) {
         return res.status(404).json({ error: 'Marks not found for the given course' });
@@ -196,14 +198,19 @@ const deleteMarks = async (req, res) => {
         return res.status(404).json({ error: 'Marks not found for the given examType' });
       }
   
-      const student = examMarks.studentMarks.find((student) => student.studentId === studentId);
+      const student = examMarks.studentMarks.find((student) => student.StudentId === StudentId);
   
       if (!student) {
-        return res.status(404).json({ error: 'No such student with the given studentId' });
+        return res.status(404).json({ error: 'No such student with the given StudentId' });
       }
 
       // deleting marks if record found
-      examMarks.studentMarks = examMarks.studentMarks.filter((student) => student.studentId !== studentId);
+      examMarks.studentMarks = examMarks.studentMarks.filter((student) => student.StudentId !== StudentId);
+
+      if (examMarks.studentMarks.length === 0) {
+        const examIndex = coursemarks.marks.findIndex((mark) => mark.examType === examType);
+        coursemarks.marks.splice(examIndex, 1);
+      }
   
       await coursemarks.save();
   
@@ -220,9 +227,9 @@ const deleteMarks = async (req, res) => {
 
 const getMarks = async (req, res) => {
     try {
-      const { courseId, examType } = req.params;
+      const { courseCode, examType } = req.params;
   
-      const coursemarks = await Marks.findOne({ courseId });
+      const coursemarks = await Marks.findOne({ courseCode });
   
       if (!coursemarks) {
         return res.status(404).json({ error: 'Marks not found for the given course' });
@@ -303,21 +310,36 @@ async function fetchQuizQuestions(numQuestions,topic, difficulty, type) {
   }
 }
 
-// //Get The record of all students
-// router.get('/getAll', authMiddleware(['T']), async (req, res) => {
-//   try {
-//     const users =  await Student.find({});
-//     const students = users.map(user => ({
-//       Id: user.StudentId,
-//       name: user.name
-//     }));
-//     res.send(students);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send('Server Error');
-//   }
-// });
 
 
+const viewStudents = async (req, res) => {
+  const { courseCode } = req.params;
 
-  export { loginTeacher,markAttendance ,addMarks,updateMarks,deleteMarks,getMarks,myCourses,createQuiz};
+  try {
+
+    const registeredCourses = await RegisteredCourses.find({
+      'courses.courseCode': courseCode
+    });
+
+    if (registeredCourses.length === 0) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
+
+
+    const StudentIds = registeredCourses.map((course) => {
+      console.log(course.StudentId); // Optional: Print the course object for debugging
+      return course.StudentId;
+    });
+    
+    // Find the students by student IDs
+    const students = await Student.find({ StudentId: { $in: StudentIds } });
+
+    res.json(StudentIds);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while retrieving the students.' });
+  }
+};
+
+
+  export { loginTeacher,markAttendance ,addMarks,updateMarks,deleteMarks,getMarks,myCourses,createQuiz,viewStudents};

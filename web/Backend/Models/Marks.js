@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 const marksSchema = new mongoose.Schema({
-  courseId: {
+  courseCode: {
     type: String,
     required: true,
   },
@@ -16,7 +16,7 @@ const marksSchema = new mongoose.Schema({
       },
       studentMarks: [
         {
-          studentId: {
+          StudentId: {
             type: String,
             required: true,
           },

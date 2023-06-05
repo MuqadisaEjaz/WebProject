@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 const attendanceSchema = new mongoose.Schema({
-  courseId: {
+  courseCode: {
     type: String,
     required: true,
   },
@@ -13,12 +13,12 @@ const attendanceSchema = new mongoose.Schema({
       },
       attendanceList: [
         {
-          studentId: {
+          StudentId: {
             type: String,
             required: true,
           },
           isPresent: {
-            type: Boolean,
+            type:String,
             required: true,
           },
         },
