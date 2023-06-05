@@ -186,6 +186,7 @@ const deleteMarks = async (req, res) => {
       const { courseCode, examType, StudentId } = req.params;
       console.log(StudentId)
       console.log(courseCode)
+
       const coursemarks = await Marks.findOne({ courseCode });
   
       if (!coursemarks) {
@@ -228,7 +229,17 @@ const deleteMarks = async (req, res) => {
 const getMarks = async (req, res) => {
     try {
       const { courseCode, examType } = req.params;
-  
+      const teacherId = req.TeacherId;
+      
+      const teacherAssignedCourse = await Assignment.findOne({
+        teacherReg: teacherId,
+        courseCode: courseCode
+      });
+      
+      if (!teacherAssignedCourse) {
+        return res.status(404).json({ error: 'This is not your allocated course.' });
+      }
+    
       const coursemarks = await Marks.findOne({ courseCode });
   
       if (!coursemarks) {
@@ -311,12 +322,23 @@ async function fetchQuizQuestions(numQuestions,topic, difficulty, type) {
 }
 
 
-
 const viewStudents = async (req, res) => {
   const { courseCode } = req.params;
+  const teacherId = req.TeacherId;
 
+  
   try {
+    // Check if the course is assigned to the teacher
+    const teacherAssignedCourse = await Assignment.findOne({
+      teacherReg: teacherId,
+      courseCode: courseCode
+    });
+    
+    if (!teacherAssignedCourse) {
+      return res.status(404).json({ error: 'This is not your allocated course.' });
+    }
 
+    
     const registeredCourses = await RegisteredCourses.find({
       'courses.courseCode': courseCode
     });
@@ -341,5 +363,36 @@ const viewStudents = async (req, res) => {
   }
 };
 
+// Define a route to retrieve teacher details and course information by TeacherId
+const myprofile = async (req, res) => {
+  const teacherId = req.TeacherId;
+  console.log(teacherId)
 
-  export { loginTeacher,markAttendance ,addMarks,updateMarks,deleteMarks,getMarks,myCourses,createQuiz,viewStudents};
+  try {
+    // Retrieve the teacher by TeacherId
+    const teacher = await Teacher.findOne({ TeacherId: teacherId }).exec();
+
+    if (!teacher) {
+      return res.status(404).json({ error: 'Teacher not found' });
+    }
+
+    // Retrieve assignments for the teacher
+    const assignments = await Assignment.find({ teacherReg: teacherId }).exec();
+
+    // Combine teacher details with assigned courses
+    const teacherData = {
+      teacherId: teacher.TeacherId,
+      name: teacher.name,
+      email: teacher.email,
+      phone: teacher.phone,
+      courses: assignments.map(assignment => assignment.courseCode),
+    };
+
+    res.json(teacherData);
+  } catch (error) {
+    console.error('Error retrieving teacher data', error);
+    res.status(500).json({ error: 'Failed to retrieve teacher data' });
+  }
+};
+
+  export { loginTeacher,markAttendance ,addMarks,updateMarks,deleteMarks,getMarks,myCourses,createQuiz,viewStudents,myprofile};

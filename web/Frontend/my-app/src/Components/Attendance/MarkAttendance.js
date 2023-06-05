@@ -12,13 +12,16 @@ import {
   Select,
   MenuItem
 } from '@mui/material';
+import NavBar from '../../Navbar.js';
 
 const AttendanceForm = () => {
   const [courseCode, setCourseCode] = useState('');
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
-
+  const token = localStorage.getItem('token');
+  console.log(token);
+  
   useEffect(() => {
     if (courseCode && loading) {
       fetchStudents();
@@ -27,7 +30,12 @@ const AttendanceForm = () => {
 
   const fetchStudents = async () => {
     try {
-      const response = await fetch(`http://localhost:4200/api/teacher/viewStudents/${courseCode}`);
+      const response = await fetch(`http://localhost:4200/api/teacher/viewStudents/${courseCode}`,{
+        headers: {
+          'Content-Type': 'application/json',
+          token: token,
+        }
+      });
       if (response.ok) {
         const studentsData = await response.json();
         const extractedStudentIds = studentsData.map((StudentId) => ({
@@ -36,7 +44,8 @@ const AttendanceForm = () => {
         }));
         setStudents(extractedStudentIds);
       } else {
-        console.log('Failed to fetch students');
+         const responseData = await response.json();
+         alert(responseData.error);
       }
     } catch (error) {
       console.error(error);
@@ -107,6 +116,8 @@ const AttendanceForm = () => {
   };
 
   return (
+    <>
+    <NavBar/>
     <form onSubmit={handleMarkAttendance}>
       <div style={{ display: 'flex', alignItems: 'center', marginTop: '40px', marginLeft:'280px'  }}>
         <TextField
@@ -178,6 +189,7 @@ const AttendanceForm = () => {
         <p  style={{ marginTop: '40px', marginLeft:'280px' }}>No students found for the entered Course Code</p>
       )}
     </form>
+    </>
   );
 };
 

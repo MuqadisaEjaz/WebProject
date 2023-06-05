@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import NavBar from '../../Navbar.js';
 
 const AddMarksForm = () => {
   const [courseCode, setCourseCode] = useState('');
@@ -7,6 +8,8 @@ const AddMarksForm = () => {
   const [totalMarks, setTotalMarks] = useState('');
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
+  const token = localStorage.getItem('token');
+  console.log(token);
 
   useEffect(() => {
     if (courseCode && loading) {
@@ -16,7 +19,12 @@ const AddMarksForm = () => {
 
   const fetchStudents = async () => {
     try {
-      const response = await fetch(`http://localhost:4200/api/teacher/viewStudents/${courseCode}`);
+      const response = await fetch(`http://localhost:4200/api/teacher/viewStudents/${courseCode}`,{
+        headers: {
+          'Content-Type': 'application/json',
+          token: token,
+        }
+      });
       if (response.ok) {
         const studentsData = await response.json();
         const extractedStudentIds = studentsData.map((studentId) => ({
@@ -25,7 +33,8 @@ const AddMarksForm = () => {
         }));
         setStudents(extractedStudentIds);
       } else {
-        console.log('Failed to fetch students');
+        const responseData = await response.json();
+        alert(responseData.error);
       }
     } catch (error) {
       console.error(error);
@@ -34,28 +43,7 @@ const AddMarksForm = () => {
     }
   };
 
-  const handleCourseCodeChange = (event) => {
-    setStudents([])
-    setCourseCode(event.target.value);
-  };
-
-  const handleExamTypeChange = (event) => {
-    setExamType(event.target.value);
-  };
-
-  const handleTotalMarksChange = (event) => {
-    setTotalMarks(event.target.value);
-  };
-
-  const handleStudentChange = (index, event) => {
-    const updatedStudents = [...students];
-    updatedStudents[index] = {
-      ...updatedStudents[index],
-      obtainedMarks: event.target.value,
-    };
-    setStudents(updatedStudents);
-  };
-
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -64,9 +52,6 @@ const AddMarksForm = () => {
       alert('Please add marks for all students.');
       return;
     }
-    const token = localStorage.getItem('token');
-    console.log(token);
-
     try {
       const response = await fetch(`http://localhost:4200/api/teacher/courses/${courseCode}/marks`, {
         method: 'POST',
@@ -92,13 +77,40 @@ const AddMarksForm = () => {
     }
   };
 
+
+
+  const handleCourseCodeChange = (event) => {
+    setStudents([])
+    setCourseCode(event.target.value);
+  };
+
+  const handleExamTypeChange = (event) => {
+    setExamType(event.target.value);
+  };
+
+  const handleTotalMarksChange = (event) => {
+    setTotalMarks(event.target.value);
+  };
+
+  const handleStudentChange = (index, event) => {
+    const updatedStudents = [...students];
+    updatedStudents[index] = {
+      ...updatedStudents[index],
+      obtainedMarks: event.target.value,
+    };
+    setStudents(updatedStudents);
+  };
+
   const handleViewStudents = (event) => {
     event.preventDefault();
     setLoading(true);
   };
 
+
  
   return (
+    <>
+    <NavBar/>
     <form onSubmit={handleSubmit}>
       <div style={{ display: 'flex', alignItems: 'center',marginTop: '40px', marginLeft:'280px'  }}>
         <TextField
@@ -163,6 +175,7 @@ const AddMarksForm = () => {
         <p style={{ marginTop: '40px', marginLeft:'280px' }}>No students found for the entered Course ID</p>
       )}
     </form>
+    </>
   );
 };
 

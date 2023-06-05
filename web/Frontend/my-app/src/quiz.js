@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-
+import NavBar from './Navbar.js'
 function Quiz() {
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState('');
@@ -65,7 +65,8 @@ function Quiz() {
 
   return (
     <div>
-      <form onSubmit={handleQuizSubmit}>
+      <NavBar/>
+      <form style={{ display: 'flex', alignItems: 'center', marginTop: '40px', marginLeft:'280px' }} onSubmit={handleQuizSubmit}>
         <FormControl style={{ marginLeft: '10px' }}>
           <InputLabel >Topic</InputLabel>
           <Select value={selectedTopic} onChange={handleTopicChange}>
@@ -104,13 +105,13 @@ function Quiz() {
           </Select>
         </FormControl>
 
-        <Button variant="contained" color="primary" type="submit" style={{ marginLeft: '10px' }}>
+        <Button variant="contained" color="primary" type="submit" style={{ marginLeft: '10px', backgroundColor: '#2F4A62' }}>
           Start Quiz
         </Button>
       </form>
 
       {quizQuestions.map((question, index) => (
-        <div key={index}>
+        <div style={{ marginTop: '40px', marginLeft:'280px' }} key={index}>
           <h3>{question.question}</h3>
           <ul>
             {question.options.map((option, index) => (

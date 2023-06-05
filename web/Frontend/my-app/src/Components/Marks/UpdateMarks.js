@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import NavBar from '../../Navbar.js';
 
 const UpdateMarks = () => {
   const [courseCode, setcourseCode] = useState('');
@@ -7,6 +8,8 @@ const UpdateMarks = () => {
   const [totalMarks, setTotalMarks] = useState('');
   const [studentMarks, setStudentMarks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const token = localStorage.getItem('token');
+  console.log(token);
 
   const handlecourseCodeChange = (event) => {
     setStudentMarks([])
@@ -28,13 +31,19 @@ const UpdateMarks = () => {
     event.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:4200/api/teacher/courses/${courseCode}/marks/${examType}`);
+      const response = await fetch(`http://localhost:4200/api/teacher/courses/${courseCode}/marks/${examType}`,{
+        headers: {
+          'Content-Type': 'application/json',
+          token: token,
+        }
+      });
       if (response.ok) {
         const { totalMarks, studentMarks } = await response.json();
         setTotalMarks(totalMarks);
         setStudentMarks(studentMarks);
       } else {
-        console.log('Failed to fetch marks');
+         const responseData = await response.json();
+        alert(responseData.error);
       }
     } catch (error) {
       console.error(error);
@@ -82,6 +91,7 @@ const UpdateMarks = () => {
 
   return (
     <div>
+      <NavBar/>
       <form onSubmit={fetchMarks}>
         <div style={{ display: 'flex', alignItems: 'center', marginTop: '40px', marginLeft:'280px' }}>
           <TextField

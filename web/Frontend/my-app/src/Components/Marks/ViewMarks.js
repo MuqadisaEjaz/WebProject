@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-
+import NavBar from '../../Navbar.js';
 const ViewMarksForm = () => {
   const [courseCode, setcourseCode] = useState('');
   const [examType, setExamType] = useState('');
   const [totalMarks, setTotalMarks] = useState('');
   const [studentMarks, setStudentMarks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const token = localStorage.getItem('token');
+  console.log(token);
+
 
   useEffect(() => {
     if (courseCode && examType && loading) {
@@ -16,14 +19,20 @@ const ViewMarksForm = () => {
 
   const fetchStudentMarks = async () => {
     try {
-      const response = await fetch(`http://localhost:4200/api/teacher/courses/${courseCode}/marks/${examType}`);
+      const response = await fetch(`http://localhost:4200/api/teacher/courses/${courseCode}/marks/${examType}`,{
+        headers: {
+          'Content-Type': 'application/json',
+          token: token,
+        }
+      });
       if (response.ok) {
         const marksData = await response.json();
         const { totalMarks, studentMarks } = marksData;
         setTotalMarks(totalMarks);
         setStudentMarks(studentMarks);
       } else {
-        console.log('Failed to fetch student marks');
+        const responseData = await response.json();
+        alert(responseData.error);
       }
     } catch (error) {
       console.error(error);
@@ -50,6 +59,8 @@ const ViewMarksForm = () => {
   };
 
   return (
+    <>
+    <NavBar/>
     <form>
       <div style={{ display: 'flex', alignItems: 'center', marginTop: '40px', marginLeft:'280px'  }}>
         <TextField
@@ -103,6 +114,7 @@ const ViewMarksForm = () => {
         <p style={{ marginTop: '40px', marginLeft:'280px' }}>No student marks found for the entered Course ID and Exam Type</p>
       )}
     </form>
+    </>
   );
 };
 

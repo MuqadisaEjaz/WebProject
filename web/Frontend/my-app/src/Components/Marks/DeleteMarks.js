@@ -1,39 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import NavBar from '../../Navbar.js';
 
 const DeleteMarks = () => {
   const [courseCode, setCourseCode] = useState('');
   const [examType, setExamType] = useState('');
   const [studentMarks, setStudentMarks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const token = localStorage.getItem('token');
+  console.log(token);
 
-  const handleCourseCodeChange = (event) => {
-    setStudentMarks([]);
-    setCourseCode(event.target.value);
-  };
-
-  const handleExamTypeChange = (event) => {
-    setExamType(event.target.value);
-  };
-
-  useEffect(() => {
-    if (courseCode && loading) {
-      handleFetchMarks();
-    }
-  }, [courseCode, examType, loading]);
+  // useEffect(() => {
+  //   if (courseCode && loading) {
+  //     handleFetchMarks();
+  //   }
+  // }, [courseCode, examType, loading]);
 
   const handleFetchMarks = async (event) => {
     event.preventDefault();
-
     setLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:4200/api/teacher/courses/${courseCode}/marks/${examType}`);
+      const response = await fetch(`http://localhost:4200/api/teacher/courses/${courseCode}/marks/${examType}`,{
+        headers: {
+          'Content-Type': 'application/json',
+          token: token,
+        }
+      });
       if (response.ok) {
         const { studentMarks } = await response.json();
         setStudentMarks(studentMarks);
       } else {
-        console.log('Failed to fetch marks');
+        const responseData = await response.json();
+        alert(responseData.error);
       }
     } catch (error) {
       console.error(error);
@@ -43,8 +42,6 @@ const DeleteMarks = () => {
   };
 
   const handleDeleteMarks = async (StudentId) => {
-    const token = localStorage.getItem('token');
-    console.log(token);
     try {
       const response = await fetch(`http://localhost:4200/api/teacher/courses/${courseCode}/marks/${examType}/students/${StudentId}`, {
         method: 'DELETE',
@@ -64,8 +61,19 @@ const DeleteMarks = () => {
     }
   };
 
+  const handleCourseCodeChange = (event) => {
+    setStudentMarks([]);
+    setCourseCode(event.target.value);
+  };
+
+  const handleExamTypeChange = (event) => {
+    setExamType(event.target.value);
+  };
+
+  
   return (
     <div>
+      <NavBar/>
       <form onSubmit={handleFetchMarks}>
         <div style={{ display: 'flex', alignItems: 'center', marginTop: '40px', marginLeft:'280px' }}>
           <TextField
