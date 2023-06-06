@@ -9,7 +9,9 @@ import { Logout } from '@mui/icons-material';
 
 
 const AppBarStyled = styled(AppBar)`
+  position: fixed;
   background-color: #2F4A62;
+  top: 0;
 `;
 
 const AppTitle = styled(Typography)`

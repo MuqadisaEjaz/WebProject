@@ -66,8 +66,8 @@ function Quiz() {
   return (
     <div>
       <NavBar/>
-      <form style={{ display: 'flex', alignItems: 'center', marginTop: '40px', marginLeft:'280px' }} onSubmit={handleQuizSubmit}>
-        <FormControl style={{ marginLeft: '10px' }}>
+      <form style={{ display: 'flex', alignItems: 'center', marginTop: '100px', marginLeft:'280px' }} onSubmit={handleQuizSubmit}>
+        <FormControl style={{ marginLeft: '10px' ,width:'auto' }}>
           <InputLabel >Topic</InputLabel>
           <Select value={selectedTopic} onChange={handleTopicChange}>
             <MenuItem value="">
@@ -81,7 +81,7 @@ function Quiz() {
           </Select>
         </FormControl>
 
-        <FormControl style={{ marginLeft: '10px' }}>
+        <FormControl style={{ marginLeft: '10px', width:'110px' }}>
           <InputLabel >Difficulty</InputLabel>
           <Select value={selectedDifficulty} onChange={handleDifficultyChange}>
             <MenuItem value="easy">Easy</MenuItem>
@@ -97,7 +97,7 @@ function Quiz() {
           onChange={handleNumQuestionsChange}
         />
 
-        <FormControl style={{ marginLeft: '10px' }}>
+        <FormControl style={{ marginLeft: '10px' ,width:'100px'}}>
           <InputLabel>Type</InputLabel>
           <Select value={selectedType} onChange={handleTypeChange}>
             <MenuItem value="multiple">Multiple Choice</MenuItem>

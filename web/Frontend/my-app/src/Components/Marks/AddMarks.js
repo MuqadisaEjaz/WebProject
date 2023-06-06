@@ -112,7 +112,7 @@ const AddMarksForm = () => {
     <>
     <NavBar/>
     <form onSubmit={handleSubmit}>
-      <div style={{ display: 'flex', alignItems: 'center',marginTop: '40px', marginLeft:'280px'  }}>
+      <div style={{ display: 'flex', alignItems: 'center',marginTop: '100px', marginLeft:'280px'  }}>
         <TextField
           label="Course ID"
           variant="outlined"

@@ -31,7 +31,7 @@ const MyProfileTable = () => {
   return (
     <>
     <NavBar/>
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',marginTop: '40px', marginLeft:'280px',marginRight:'40px'  }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',marginTop: '100px', marginLeft:'280px',marginRight:'40px'  }}>
     <TableContainer component={Paper} >
       <Table >
         <TableBody>
