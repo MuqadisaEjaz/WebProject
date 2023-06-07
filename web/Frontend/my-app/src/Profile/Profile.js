@@ -4,7 +4,7 @@ import NavBar from '../Navbar.js';
 const MyProfileTable = () => {
   const [teacherData, setTeacherData] = useState(null);
   const token = localStorage.getItem('token');
-  console.log(token);
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {

@@ -45,12 +45,11 @@ function Quiz() {
         }));
         setQuizQuestions(quizQuestions);
       } else {
-        // handle the case where the response is not an array
-        console.log('No quiz questions found.');
+        alert('No quiz questions found.');
         console.log(data);
       }
     } else {
-      console.log('enter all fields');
+      alert('enter all fields');
     }
   };
 
@@ -97,7 +96,7 @@ function Quiz() {
           onChange={handleNumQuestionsChange}
         />
 
-        <FormControl style={{ marginLeft: '10px' ,width:'100px'}}>
+        <FormControl style={{ marginLeft: '10px' ,width:'180px'}}>
           <InputLabel>Type</InputLabel>
           <Select value={selectedType} onChange={handleTypeChange}>
             <MenuItem value="multiple">Multiple Choice</MenuItem>

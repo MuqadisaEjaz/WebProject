@@ -8,13 +8,7 @@ const DeleteMarks = () => {
   const [studentMarks, setStudentMarks] = useState([]);
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem('token');
-  console.log(token);
 
-  // useEffect(() => {
-  //   if (courseCode && loading) {
-  //     handleFetchMarks();
-  //   }
-  // }, [courseCode, examType, loading]);
 
   const handleFetchMarks = async (event) => {
     event.preventDefault();

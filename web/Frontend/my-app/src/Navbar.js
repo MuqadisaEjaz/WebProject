@@ -54,6 +54,8 @@ const SideBarList = styled(List)`
     margin-left: 8px;
   }
 `;
+
+
 const NavBar = () => {
     const [open, setOpen] = React.useState(true);
     const navigate = useNavigate();
@@ -62,15 +64,19 @@ const NavBar = () => {
       setOpen(true);
     };
   
-    // const handleDrawerClose = () => {
-    //   setOpen(false);
-    // };
-  
+
+     const handleLogin = () => {
+     localStorage.removeItem('token');
+    // // Prevent going back to the previous page
+    // window.history.replaceState(null, null, '/');
+    navigate('/');
+    };
+
     const NavIconButton = styled(IconButton)`
       margin-left: auto;
       color: #fff;
     `;
-  
+
     const navigateToComponent = (path) => {
       navigate(path);
     };
@@ -83,9 +89,9 @@ const NavBar = () => {
               <HomeIcon />
             </NavButton>
             <AppTitle variant="h6" component="div">
-              LMS
+              LearnUp
             </AppTitle>
-            <NavIconButton onClick={() => navigateToComponent('/')}>
+            <NavIconButton onClick={handleLogin}>
               <Logout />
               Logout
             </NavIconButton>

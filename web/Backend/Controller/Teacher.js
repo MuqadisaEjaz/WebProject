@@ -349,11 +349,10 @@ const viewStudents = async (req, res) => {
 
 
     const StudentIds = registeredCourses.map((course) => {
-      console.log(course.StudentId); // Optional: Print the course object for debugging
+      console.log(course.StudentId); 
       return course.StudentId;
     });
     
-    // Find the students by student IDs
     const students = await Student.find({ StudentId: { $in: StudentIds } });
 
     res.json(StudentIds);
@@ -363,21 +362,20 @@ const viewStudents = async (req, res) => {
   }
 };
 
-// Define a route to retrieve teacher details and course information by TeacherId
+
 const myprofile = async (req, res) => {
   const teacherId = req.TeacherId;
   console.log(teacherId)
 
   try {
-    // Retrieve the teacher by TeacherId
-    const teacher = await Teacher.findOne({ TeacherId: teacherId }).exec();
+  
+    const teacher = await Teacher.findOne({ TeacherId: teacherId })
 
     if (!teacher) {
       return res.status(404).json({ error: 'Teacher not found' });
     }
 
-    // Retrieve assignments for the teacher
-    const assignments = await Assignment.find({ teacherReg: teacherId }).exec();
+    const assignments = await Assignment.find({ teacherReg: teacherId })
 
     // Combine teacher details with assigned courses
     const teacherData = {

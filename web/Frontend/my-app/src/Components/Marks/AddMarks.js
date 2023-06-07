@@ -9,7 +9,7 @@ const AddMarksForm = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem('token');
-  console.log(token);
+
 
   useEffect(() => {
     if (courseCode && loading) {
@@ -107,7 +107,6 @@ const AddMarksForm = () => {
   };
 
 
- 
   return (
     <>
     <NavBar/>

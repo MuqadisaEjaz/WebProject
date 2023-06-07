@@ -8,7 +8,6 @@ const ViewMarksForm = () => {
   const [studentMarks, setStudentMarks] = useState([]);
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem('token');
-  console.log(token);
 
 
   useEffect(() => {

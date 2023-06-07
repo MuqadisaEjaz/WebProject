@@ -1,11 +1,26 @@
-import React, { useState } from 'react';
+
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Grid, TextField, Button, Typography } from '@mui/material';
+import '../Login/Login.css'
 
 function Login() {
   const [teacherId, setTeacherId] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleDisableNavigation = (e) => {
+      e.preventDefault();
+    };
+
+    window.history.pushState(null, null, window.location.href);
+    window.addEventListener('popstate', handleDisableNavigation);
+
+    return () => {
+      window.removeEventListener('popstate', handleDisableNavigation);
+    };
+  }, []);
 
   const handleTeacherIdChange = (event) => {
     setTeacherId(event.target.value);
@@ -32,16 +47,16 @@ function Login() {
     if (response.ok) {
       // login successful
       const data = await response.json();
-      const token = data.token; // Assuming the API response includes a token field
+      const token = data.token;
 
       // Store the token in local storage
       localStorage.setItem('token', token);
       console.log(token);
       console.log('Login successful!');
-      navigate('/homepage'); // Navigate to the desired route after successful login
+      navigate('/homepage');
     } else {
       // login failed
-      console.log('Login failed!');
+      alert('Login failed!');
     }
 
     setTeacherId('');
@@ -51,16 +66,16 @@ function Login() {
   return (
     <div>
       <Container component="main" maxWidth="md">
-        <div style={{ marginTop: '150px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="container">
           <Grid container>
-            <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <img src="https://www.pockethrms.com/wp-content/uploads/2023/03/Training-Management-made-Effortless.jpg" alt="Logo" style={{ width: '100%', height: 'auto', maxWidth: '800px', maxHeight: '400px' }} />
+            <Grid item xs={6} className="logo-container">
+              <img src="https://www.pockethrms.com/wp-content/uploads/2023/03/Training-Management-made-Effortless.jpg" alt="Logo" className="logo-image" />
             </Grid>
-            <Grid item xs={6} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <Typography component="h1" variant="h5" style={{ textAlign: 'center', fontStyle: 'italic', fontWeight: 'bold' }}>
+            <Grid item xs={6} className="content-container">
+              <Typography component="h1" variant="h5" className="title">
                 Welcome To LMS
               </Typography>
-              <form onSubmit={handleSubmit} style={{ marginTop: '16px' }}>
+              <form onSubmit={handleSubmit} className="form">
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -84,7 +99,7 @@ function Login() {
                   value={password}
                   onChange={handlePasswordChange}
                 />
-                <Button type="submit" fullWidth variant="contained" color="primary" style={{ marginTop: '16px', backgroundColor: '#2F4A62' }}>
+                <Button type="submit" fullWidth variant="contained" color="primary" className="submit-button" style={{ backgroundColor: '#2F4A62' }}>
                   Login
                 </Button>
               </form>

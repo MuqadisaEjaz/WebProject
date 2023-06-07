@@ -1,0 +1,29 @@
+.container {
+    margin-top: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .logo-image {
+    width: 100%;
+    height: auto;
+    max-width: 800px;
+    max-height: 400px;
+  }
+  
+  .title {
+    text-align: center;
+    font-style: italic;
+    font-weight: bold;
+  }
+  
+  .form {
+    margin-top: 16px;
+  }
+  
+  .submit-button {
+    margin-top: 16px;
+    background-color: #2F4A62;
+  }
+  

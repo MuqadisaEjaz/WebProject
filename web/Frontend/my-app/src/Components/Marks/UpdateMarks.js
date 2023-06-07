@@ -9,7 +9,7 @@ const UpdateMarks = () => {
   const [studentMarks, setStudentMarks] = useState([]);
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem('token');
-  console.log(token);
+
 
   const handlecourseCodeChange = (event) => {
     setStudentMarks([])
@@ -18,18 +18,11 @@ const UpdateMarks = () => {
 
   const handleExamTypeChange = (event) => {
     setExamType(event.target.value);
+
   };
-
-//   useEffect(() => {
-//     if (courseCode && examType && loading) {
-//         fetchMarks();
-//     }
-//   }, [courseCode, examType, loading]);
-
 
   const fetchMarks = async (event) => {
     event.preventDefault();
-    setLoading(true);
     try {
       const response = await fetch(`http://localhost:4200/api/teacher/courses/${courseCode}/marks/${examType}`,{
         headers: {
