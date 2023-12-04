@@ -9,11 +9,22 @@ import RegisteredCourses from '../Models/RegisteredCourses.js'
 
 //*******************Login*************************
 
+const add = async (req, res) => {
+try {
+  const newTeacher = new Teacher(req.body);
+  const savedTeacher = await newTeacher.save();
+  res.status(201).json(savedTeacher);
+} catch (error) {
+  res.status(500).json({ error: error.message });
+}
+}
+
 const loginTeacher = async (req, res) => {
     try {
   
       const { TeacherId, password} = req.body;
-
+      console.log(TeacherId)
+      console.log(password)
       const users = await Teacher.findOne({ TeacherId});
       if (users.length === 0) {
         res.send('Invalid credentials');
@@ -393,4 +404,39 @@ const myprofile = async (req, res) => {
   }
 };
 
-  export { loginTeacher,markAttendance ,addMarks,updateMarks,deleteMarks,getMarks,myCourses,createQuiz,viewStudents,myprofile};
+
+const addMarksOfaCourse = async (req, res) => {
+  try {
+    const { courseCode } = req.params;
+    const { totalMarks, students } = req.body;
+
+    const studentMarks = students.map((student) => {
+      const { StudentId, obtainedMarks } = student;
+      return { StudentId, obtainedMarks };
+    });
+
+    let coursemarks = await Marks.findOne({ courseCode });
+
+    if (coursemarks) {
+      // Update existing entry or add a new entry
+      coursemarks.marks = [{ totalMarks, studentMarks }];
+    } else {
+      // Create a new record
+      coursemarks = new Marks({
+        courseCode,
+        marks: [{ totalMarks, studentMarks }],
+      });
+    }
+
+    await coursemarks.save();
+
+    return res.status(200).json({ message: 'Marks added/updated successfully' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Server Error' });
+  }
+};
+
+
+
+  export { loginTeacher,markAttendance ,addMarks,updateMarks,deleteMarks,getMarks,myCourses,createQuiz,viewStudents,myprofile,add,addMarksOfaCourse};

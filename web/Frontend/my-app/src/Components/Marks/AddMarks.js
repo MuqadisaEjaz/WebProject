@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import NavBar from '../../Navbar.js';
 
+import { Select, MenuItem } from '@mui/material';
 const AddMarksForm = () => {
   const [courseCode, setCourseCode] = useState('');
   const [examType, setExamType] = useState('');
@@ -121,13 +122,15 @@ const AddMarksForm = () => {
         <Button variant="contained" color="primary" onClick={handleViewStudents} style={{ marginLeft: '10px', backgroundColor: '#2F4A62' }}>
           View Students
         </Button>
-        <TextField
-          label="Exam Type"
-          variant="outlined"
-          value={examType}
-          onChange={handleExamTypeChange}
-          style={{ marginLeft: '10px' }}
-        />
+        <Select
+            label="Exam Type"
+            variant="outlined"
+            value={examType}
+            onChange={handleExamTypeChange}
+            style={{ marginLeft: '10px' }}
+          >
+            <MenuItem value="Final">Final</MenuItem>
+          </Select>
         <TextField
           label="Total Marks"
           variant="outlined"

@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 const  app = express();
 import cors from "cors";
 
-mongoose.connect("mongodb+srv://Muqadisa:muqadisa1@cluster0.t4cixon.mongodb.net/LMS")
+mongoose.connect("mongodb+srv://aimen:aimen123@cluster0.cjosamv.mongodb.net/blockchain")
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(err));
 
